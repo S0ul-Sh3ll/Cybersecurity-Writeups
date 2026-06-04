@@ -1,6 +1,6 @@
 # TryHackMe: Services – Walkthrough & Writeup
 
-Welcome to my writeup for the **Services** room on TryHackMe. This is a beginner-friendly machine designed to test your enumeration skills and exploitation of common network services in AD environment on a Windows Server. I have tried to keep the it as short and simple as possible with explanations on everything assuming that you are a total beginner. 
+Welcome to my writeup for the **Services** room on TryHackMe. This is a beginner-friendly machine designed to test your enumeration skills and exploitation of common network services in AD environment on a Windows Server.
 
 ## 🎯 Objective
 * Find the **User** flag.
