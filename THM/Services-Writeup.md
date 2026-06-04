@@ -13,6 +13,7 @@ Start up the lab and connect using Open VPN to your own Kali Lab (highly recomme
 Every successful penetration test or CTF challenge starts with information gathering. We need to find out what doors (ports) are open on the target machine and what services are running behind them. To do this, we will use my favourite network scanning tool called **Nmap**.
 
 ### The Nmap Command
+---
 Here is the exact command used to scan the target IP (`10.114.181.105`):
 
 ```nmap -p- -Pn -A --min-rate 2000 --initial-rtt-timeout 50ms --max-rtt-timeout 150ms --max-retries 1 --stats-every 1m 10.114.181.105```
@@ -37,7 +38,6 @@ Standard Nmap scans can be slow. This specific command is tuned for speed and ef
 
 
 ## 🧩 Analyzing the Nmap Results: Connecting the Dots
-
 When you run an Nmap scan and a massive wall of text pops up, your job isn't to memorize every single line. Your job is to look at the patterns and ask: 
 
 > *"What is this server's primary job, and how can I use this information?"*
@@ -51,7 +51,7 @@ We see **Kerberos (Port 88)**, **LDAP (Port 3268)**, and **SMB (Port 445)** all 
 * **The Domain Name:** Looking closely at the SSL certificate and RDP information inside the scan results, we can extract the internal domain name: `services.local`
 * **The Hostname:** `WIN-SERVICES`
 * **The OS:** Windows Server (Specifically, the Nmap output shows product version `10.0.17763`, which a quick Google search reveals is **Windows Server 2019**).
-
+---
 Open Ports -
 ```
 53/tcp    open  domain                 # Simple DNS Plus - Active Directory requires DNS to function         # can try DNS zone transfer
@@ -80,6 +80,7 @@ Since we know this is an Active Directory environment named `services.local`, ou
 But first, we need names. Let's start with the low-hanging fruit: **the web server**.
 
 ### Step 1: Scouring the Web Page
+---
 Whenever port 80 or 443 is open, always open your browser and look around. Companies often leave clues right on their public-facing sites. 
 
 We are specifically hunting for:
@@ -103,6 +104,7 @@ Look closely at the team section and the contact page. By scraping the names lis
 <img width="1273" height="601" alt="image-159" src="https://github.com/user-attachments/assets/fedc17ad-7bae-4050-ade2-24b99e059382" />
 
 ### Step 2: Harvesting Names and Generating Usernames
+---
 Navigating to the "About" page of the website pays off. We successfully uncover four names listed under the team section:
 * Joanne Doe
 * Jack Rock
@@ -137,6 +139,7 @@ python3 username-generate.py -u unameservices.txt -o servicesadnames.txt
 <img width="592" height="681" alt="image-161" src="https://github.com/user-attachments/assets/70a7dba2-a121-4684-861a-7b9397afab13" />
 
 ### Step 3: Validating Users with Kerbrute
+---
 Now that we have a solid list of potential username combinations, we need a way to test them against the Active Directory Domain Controller to see which ones are actually valid. 
 To do this without locking out accounts or making too much noise, we use a tool called **Kerbrute**. Kerbrute takes advantage of the Kerberos pre-authentication process, which allows us to rapidly validate usernames without generating Windows logon failure events (Event ID 4625).
 
@@ -160,6 +163,7 @@ Try to run it using - `./kerbrute_linux_amd64`
 <img width="625" height="565" alt="image-163" src="https://github.com/user-attachments/assets/236397c0-556e-4444-9890-92f69188b330" />
 
 ### Step 4: Setting Up Global Commands & Enumerating
+---
 Instead of always typing `./kerbrute_linux_amd64` from this specific folder, we can move the file into our system's binary directory (`/usr/bin`). This allows us to call it from any folder on our attack machine.
 Copy the binary to `/usr/bin/` and test that it works globally:
 ```
@@ -181,6 +185,7 @@ kerbrute userenum servicesadnames.txt  --dc 10.114.181.105 -d services.local > g
 <img width="600" height="266" alt="image-165" src="https://github.com/user-attachments/assets/8b24c51c-b47c-4bb0-a2c7-b30547558a5f" />
 
 ### Step 5: Extracting and Cleaning Valid Users
+---
 After running Kerbrute, our `generated.txt` file reveals four valid Active Directory accounts:
 ```
 2026/06/04 06:06:32 >  [+] VALID USERNAME:       j.doe@services.local
@@ -200,6 +205,7 @@ grep "VALID USERNAME:" generated.txt | awk -F' ' '{print $NF}' | cut -d'@' -f1 >
 <img width="628" height="146" alt="image-166" src="https://github.com/user-attachments/assets/9b446b3c-d40e-4e6e-8ab7-1baf4133b416" />
 
 ### Step 6: Weaponization (AS-REP Roasting)
+---
 With a clean target list of active users, we can execute: AS-REP Roasting.
 
 What is AS-REP Roasting?
@@ -235,7 +241,7 @@ Within moments, John cracks the hash and reveals the valid domain credentials:
 `j.rock:Serviceworks1` 
 
 Whenever you gain your first set of valid domain credentials in an Active Directory environment, your immediate next step should always be to check for Kerberoasting.
-
+---
 What is Kerberoasting?
 
 While AS-REP Roasting targets accounts that don't require pre-authentication, Kerberoasting targets Service Accounts (accounts mapped to a Service Principal Name, or SPN, like web servers or databases). Since any regular domain user can request a Kerberos ticket for any service account in the domain, we can use our new credentials for j.rock to ask the domain controller for these tickets and attempt to crack them offline.
@@ -294,7 +300,8 @@ Navigate over to `j.rock`'s Desktop and inside, you will spot a file named user.
 ## 👑 Phase 4: Privilege Escalation 
 Gaining a user shell is only half the battle. Now, we need to escalate our privileges to administrative or `NT AUTHORITY\SYSTEM` level to find the root flag. 
 
-### Step 1: Enumerating User Tokens & Groups
+### Enumerating User Tokens & Groups
+---
 The very first command you should run on any new Windows shell is `whoami /all`. This command reveals your user details, security identifiers (SIDs), the groups you belong to, and your active privileges.
 
 <ins>Figure 18: whoami /all</ins>
