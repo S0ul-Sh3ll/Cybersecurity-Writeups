@@ -39,7 +39,7 @@ When you run an Nmap scan and a massive wall of text pops up, your job isn't to 
 
     "What is this server's primary job, and how can I use this information?"
 
-#### The Big Picture: What is this machine?
+#### <ins>The Big Picture: What is this machine?</ins>
 As a beginner, instead of looking at these ports as random numbers, you should group them by their functional relationships:
 
 * **The Identity & Database Engine (LDAP - Port 389/3268):** This is the directory database containing all the objects in the network—users, computers, groups, and permissions. If we can query this, we can pull a complete directory of everyone who works here.
@@ -51,7 +51,7 @@ Conclusion: This machine is a **Windows Domain Controller (DC)**.
 
  Domain Controller is the absolute "brain" of a Windows Active Directory network. It handles all security authentication requests, verifies user passwords, and dictates who has access to what files across the entire network ecosystem. 
 
-### Open Ports Reference Table
+### <ins>Open Ports Reference Table</ins>
 
 | Port | Service | Significance for Penetration Testing |
 | :--- | :--- | :--- |
@@ -147,7 +147,7 @@ _Figure 4: ASREProasting_
 
 While some accounts come back with errors, the user account t-skid had pre-authentication disabled! The tool successfully captured a valid Kerberos $krb5asrep$23$ hash string and outputted it directly to our uhashes.txt file.
 
-## 6. Offline Hash Cracking
+## 6.🖥️ Offline Hash Cracking
 
 Now that we have successfully captured the AS-REP hash for the user `t-skid` and saved it inside `uhashes.txt`, it is time to extract the plaintext password using **John the Ripper**. 
 
@@ -218,7 +218,7 @@ Password: ry=ibfkfv,s6h,
 ```
 
 
-## 9. Gaining Initial Access & Capturing the User Flag
+## 9.🗄️ Gaining Initial Access & Capturing the User Flag
 
 With a valid set of credentials for an account that belongs to the **Remote Management Users** group (`enterprise-core-vn`), we will use **Evil-WinRM**, gain shell and capture the user flag. 
 ```
