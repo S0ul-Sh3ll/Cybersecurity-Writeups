@@ -46,7 +46,8 @@ Here is exactly what each flag does:
 
  Figure 1: Nmap Scan Result
 
-
+<img width="738" height="689" alt="image-210" src="https://github.com/user-attachments/assets/8bb6ff4f-cbab-421a-af55-57eaea74ea1c" />
+<img width="736" height="681" alt="image-211" src="https://github.com/user-attachments/assets/2ef85ef0-69e1-4a2e-bf1b-299eb5342e01" />
 
  ## 2.🧩 Analyzing the Scan Results
 
@@ -90,7 +91,8 @@ Then list the contents of our mnt folder: `ls -la` and read the files to get the
 <ins>Remember, never try to cd into the mounted directory or you'll freeze and will have to restart kali.</ins>
 
 Figure 2: Mount and capture sbradley flag
-![[image-213.png]]
+
+<img width="630" height="299" alt="image-213" src="https://github.com/user-attachments/assets/e781003b-3cc4-402b-a840-0dbb7cbc561f" />
 
 Let's take a look at that spreadsheet also. You can open it right from your terminal using LibreOffice Calc(should be installed first):
 ```
@@ -98,7 +100,8 @@ localc mnt/employee_status.xlsx
 ```
 
 Figure 3: Excel file revealing employee names
-![[image-214.png]]
+
+<img width="768" height="395" alt="image-214" src="https://github.com/user-attachments/assets/a35c50f5-e8cc-4fab-8d40-31051feebb94" />
 
 <ins>In an Active Directory environment, having a list of employee names is half the battle. This gives us the raw material needed to generate a targeted username wordlist for kerbrute.</ins>
 
@@ -145,7 +148,8 @@ impacket-GetNPUsers raz0rblack.thm/ -dc-ip $target -usersfile users.txt -outputf
 ```
 
 Figure 4: Kerbrute & Asreproasting
-![[image-216.png]]
+
+<img width="628" height="522" alt="image-216" src="https://github.com/user-attachments/assets/64fa5d3d-8207-4544-a874-909bd55ba031" />
 
 Success! While Ljudmila and Steven's accounts are secure against this specific misconfiguration, Tyson Williams (twilliams) is vulnerable. Impacket successfully extracted his AS-REP hash and saved it to our hashes.txt file.
 
@@ -158,7 +162,8 @@ john --wordlist=/home/kali/rockyou.txt hashes.txt
 ```
 
 Figure 5: Hash Cracking
-![[image-215.png]]
+
+<img width="628" height="171" alt="image-215" src="https://github.com/user-attachments/assets/f181c411-ebcb-4347-a695-89cb966aaca7" />
 
 Within moments, John the Ripper matches the cryptographic hash signature and reveals our first set of valid domain credentials:
 ```
@@ -180,7 +185,8 @@ impacket-GetUserSPNs -dc-ip $target 'raz0rblack.thm/twilliams:passwordhere' -req
 ```
 
 Figure 6: Kerberoasting
-![[image-219.png]]
+
+<img width="627" height="541" alt="image-219" src="https://github.com/user-attachments/assets/d382b14e-3b44-4fd6-8452-0d3535cc96a8" />
 
 Our request successfully pulled back an active SPN mapping:
 
@@ -194,7 +200,8 @@ The Artifact: Impacket cleanly dumped a valid $krb5tgs$23$ Kerberos TGS hash.
 Let's copy this massive hash block out of our terminal, append it to a file called khash.txt, and fire up our cracking rigs once again to discover Xyan1d3's password.
 
 Figure 7: Hash Cracking
-![[image-220.png]]
+
+<img width="620" height="201" alt="image-220" src="https://github.com/user-attachments/assets/8a0ae43a-36ff-4ed4-8b3d-28941eae82b9" />
 
 Within moments, John the Ripper matches the cryptographic hash signature and reveals xyan1d3 credentials. 
 
@@ -213,11 +220,12 @@ whoami /all
 ```
 
 Figure 8: WinRM
-![[image-221.png]]
+
+<img width="624" height="585" alt="image-221" src="https://github.com/user-attachments/assets/95fe8f70-2322-4c27-a6e6-8f23dc4c8724" />
 
 Figure 9:  Privileges Information
-![[image-222.png]]
 
+<img width="626" height="173" alt="image-222" src="https://github.com/user-attachments/assets/809acf5c-c99e-4afc-bb92-28752c96b6c8" />
 
 #### 💡 Massive Privilege Escalation Vector Spotted!
 Take a close look at our group memberships and privileges:
@@ -246,8 +254,8 @@ $cred.GetNetworkCredential().Password
 ```
 
 Figure 10: Flag Captured
-![[image-243.png]]
 
+<img width="624" height="347" alt="image-243" src="https://github.com/user-attachments/assets/4dbd7652-e1e3-469b-b3ae-b48a6075ea2e" />
 
 ##  7: Privilege Escalation
 Now that we have stable access as `xyan1d3` and know we possess `SeBackupPrivilege`, our immediate goal is to harvest password hashes to escalate our privileges further.
@@ -259,7 +267,8 @@ impacket-secretsdump "raz0rblack.thm/xyan1d3:password@$target" -just-dc
 It failed because the -just-dc flag relies on specific replication privileges typically reserved for Domain Administrators (like the Replicating Directory Changes permission). Even though xyan1d3 is a member of the Backup Operators group, the account lacks the explicit Active Directory rights required to perform a remote network DCSync attack.
 
 Figure 11: Failed SecretsDump Attack
-![[image-224.png]]
+
+<img width="623" height="251" alt="image-224" src="https://github.com/user-attachments/assets/735059f6-85e8-4369-8ce3-ee87b5d370ad" />
 
 ### The Workaround: Abusing SeBackupPrivilege Locally
 Since the network route is blocked, we can pivot to an offline attack. Because SeBackupPrivilege is explicitly Enabled in our current session, we have the authority to read any sensitive file on the operating system, completely bypassing local Access Control Lists (ACLs).
@@ -282,7 +291,8 @@ download system.hive
 ```
 
 Figure 12: Save SAM & SYSTEM Hives
-![[image-225.png]]
+
+<img width="616" height="497" alt="image-225" src="https://github.com/user-attachments/assets/968757b4-d41d-4d5e-b2f2-5b0e34d8c705" />
 
 #### Parsing the Hives Offline
 With the files safely downloaded onto our Kali Linux instance, we can now use Impacket's secretsdump locally to parse the database offline. This does not touch the target network at all, making it completely silent.
@@ -292,7 +302,8 @@ impacket-secretsdump -sam sam.hive -system system.hive LOCAL
 ```
 
 Figure 13: Dump the Hashes
-![[image-226.png]]
+
+<img width="626" height="187" alt="image-226" src="https://github.com/user-attachments/assets/be93848a-1baa-40c3-a178-5f56f0cbf081" />
 
 Impacket has cleanly decrypted and dumped the local NTLM password hashes stored in the SAM database.
 
@@ -309,13 +320,15 @@ evil-winrm -i $target -u Administrator -H 9689931bed40ca5redacted...
 ```
 
 Figure 14: Login as Administrator
-![[image-227.png]]
+
+<img width="621" height="179" alt="image-227" src="https://github.com/user-attachments/assets/433b9d78-93ae-4e12-9bfc-331140dc8426" />
 
 After utilizing the local registry dumps to compromise the system completely, we successfully authenticated as the local **Administrator** via Evil-WinRM. 
 While exploring the Administrator's directories for our final objective, we stumbled upon another curious file named `root.xml`.
 
 Figure 15: root.xml
-![[image-228.png]]
+
+<img width="629" height="653" alt="image-228" src="https://github.com/user-attachments/assets/2f7f531a-9432-4e8e-9967-f4d674288a37" />
 
 Unlike traditional text flags, inspecting `root.xml` did not immediately yield a plaintext flag. Instead, it contained a massive string of raw hexadecimal characters.
 To reveal the underlying message, we can copy this hex string back into our local Kali Linux machine and use the xxd command with the -r (reverse) and -p (plain continuous hex dump) flags to convert it back into human-readable ASCII text:
@@ -324,7 +337,8 @@ echo "44616d6e20796......" | xxd -r -p
 ```
 
 Figure 16: Decode the Flag
-![[image-229.png]]
+
+<img width="618" height="289" alt="image-229" src="https://github.com/user-attachments/assets/0f24b591-0c22-484c-8f6c-494817f636cd" />
 
 We have successfully retrieved the root flag!
 
@@ -336,7 +350,8 @@ Let's execute the remote sync from our Kali machine using the Administrator's ha
 ```
 
 Figure 17: SecretsDump
-![[image-230.png]]
+
+<img width="627" height="656" alt="image-230" src="https://github.com/user-attachments/assets/93eba115-9db5-4182-8493-a4410a4dc487" />
 
 This dump completely breaks wide open every account remaining on our checklist, we not have NTLM hash for every user and can login via Pass the Hash for every user!
 
@@ -349,7 +364,8 @@ type .\definitely_definitely_definitely_definitely_definitely_definitely_definit
 ```
 
 Figure 18: Sus File
-![[image-231.png]]
+
+<img width="622" height="371" alt="image-231" src="https://github.com/user-attachments/assets/c422213e-7c6a-408b-bf15-5c9181044b23" />
 
 This yielded our flag successfully!
 
@@ -361,7 +377,8 @@ Get-ChildItem -Path C:\ -Filter "*secret*" -Recurse -ErrorAction SilentlyContinu
 💡 Tip: Appending -ErrorAction SilentlyContinue is crucial here; it forces the scanner to skip past system folders that our current user doesn't have permission to read, preventing our terminal from flooding with access errors.
 
 Figure 19: Find Secret
-![[image-232.png]]
+
+<img width="627" height="253" alt="image-232" src="https://github.com/user-attachments/assets/15a0753b-3d3a-42d7-9783-521b00886b04" />
 
 The search query hits perfectly, identifying an internal hidden folder path: C:\Program Files\Top Secret\top_secret.png
 
@@ -374,10 +391,12 @@ download top_secret.png
 ```
 
 Figure 20: Download and open secret file
-![[image-233.png]]
+
+<img width="624" height="578" alt="image-233" src="https://github.com/user-attachments/assets/3cdb2373-5753-43b9-bf34-0d8eb4a75292" />
 
 Figure 21: Open Secret.png
-![[image-234.png]]
+
+<img width="593" height="587" alt="image-234" src="https://github.com/user-attachments/assets/ae631de7-2e3f-47de-a373-8949cf52737e" />
 
 <ins>Opening up the exfiltrated top_secret.png on our Kali machine reveals a well-known community meme with the answer.</ins>
 
@@ -392,7 +411,8 @@ impacket-smbclient "raz0rblack.thm/sbradley@$target" -hashes aad3b435b51404eeaad
 The server blocks direct authentication because the account flag enforces a mandatory password reset.
 
 Figure 22: Change Password
-![[image-235.png]]
+
+<img width="625" height="111" alt="image-235" src="https://github.com/user-attachments/assets/c63d6065-3fab-44df-976d-e20bad2cbd0f" />
 
 #### The Workaround: Administrative Password Reset
 Since we already maintain an active Evil-WinRM session as the local Administrator, we can easily override this requirement. By using the native Windows network utility, we force a password update across the domain for Steven's account:
@@ -401,7 +421,8 @@ net user sbradley "Password123!" /domain
 ```
 
 Figure 23: Password changed
-![[image-236.png]]
+
+<img width="628" height="74" alt="image-236" src="https://github.com/user-attachments/assets/6ad44724-0431-422c-9237-9ad542466098" />
 
 Now that the account password is updated and active, we re-authenticate via impacket-smbclient using our newly assigned plaintext credentials:
 ```
@@ -410,18 +431,21 @@ impacket-smbclient "raz0rblack.thm/sbradley@$target"
 Once inside the interactive SMB prompt, listing the available shares reveals a non-standard custom directory named trash. We choose to access it and recursively pull down all contained files: `mget *`
 
 Figure 24: Download all trash files
-![[image-237.png]]
+
+<img width="612" height="400" alt="image-237" src="https://github.com/user-attachments/assets/c2e61839-7a01-4b2f-abf4-c12a7fe9cf7b" />
 
 With the loot successfully exfiltrated to our local Kali machine, we begin parsing the contents starting with the plaintext chat log.
 
 Figure 25: Chat Log
-![[image-238.png]]
+
+<img width="619" height="304" alt="image-238" src="https://github.com/user-attachments/assets/ed128511-f68c-4f7b-bfe8-6aa697d44cf9" />
 
 This confirms that experiment_gone_wrong.zip holds a full backup of the Active Directory database created during an earlier exploit scenario.
 Then we attempt to run a standard unzipping operation on the zip file confirming that the archive is heavily password protected.
 
 Figure 26: Archive Locked
-![[image-240.png]]
+
+<img width="623" height="229" alt="image-240" src="https://github.com/user-attachments/assets/105d7bbc-e5c3-4099-a61b-96cde18bc95e" />
 
 To break past the encryption layer, we process the zip file structure into an offline cracking format compatible with John the Ripper using zip2john:
 ```
@@ -434,7 +458,8 @@ john johnpls --wordlist=/home/kali/rockyou.txt
 ```
 
 Figure 27: Password Cracking
-![[image-239.png]]
+
+<img width="629" height="155" alt="image-239" src="https://github.com/user-attachments/assets/970f9905-0a7b-4b0e-8944-a57024e240dd" />
 
 The tool successfully identifies the matching plaintext string, allowing us to decrypt the archive contents and cross off What is the zip file's password? on our objectives board.
 
@@ -447,7 +472,8 @@ evil-winrm -i $target -u lvetrova -H f220d3988deb3f516c73f........
 ```
 
 Figure 28: Login as lvetrova
-![[image-241.png]]
+
+<img width="624" height="678" alt="image-241" src="https://github.com/user-attachments/assets/b85b0669-edf3-4037-9e35-b46dec9619f1" />
 
 Just like our experience with prior user endpoints, we locate a custom XML object blueprint stored directly under lvetrova.xml.
 We look at the serialized construction parameters;
