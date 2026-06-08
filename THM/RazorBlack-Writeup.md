@@ -172,7 +172,7 @@ Password: Redacted
 ```
 
 
-##🔥5: Kerberoasting
+## 🔥5: Kerberoasting
 Once we cracked Tyson Williams' (`twilliams`) AS-REP hash offline, we recovered his plaintext password: `redacted`. 
 
 Having a valid set of domain credentials changes our position entirely. We can now authenticate to the Active Directory environment as an insider and look for a highly lucrative target configuration: **Service Principal Names (SPNs)**. This technique is called **Kerberoasting**.
