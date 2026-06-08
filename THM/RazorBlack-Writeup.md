@@ -257,7 +257,7 @@ _Figure 10: Flag Captured_
 
 <img width="624" height="347" alt="image-243" src="https://github.com/user-attachments/assets/4dbd7652-e1e3-469b-b3ae-b48a6075ea2e" />
 
-##🚨 7: Privilege Escalation
+## 🚨7: Privilege Escalation
 Now that we have stable access as `xyan1d3` and know we possess `SeBackupPrivilege`, our immediate goal is to harvest password hashes to escalate our privileges further.
 Our first step was to use Impacket's `secretsdump` remotely against the Domain Controller using the network-based DRSUAPI replication method (`-just-dc`). We attempted the following command from our Kali machine:
 ```
@@ -294,7 +294,7 @@ _Figure 12: Save SAM & SYSTEM Hives_
 
 <img width="616" height="497" alt="image-225" src="https://github.com/user-attachments/assets/968757b4-d41d-4d5e-b2f2-5b0e34d8c705" />
 
-#### Parsing the Hives Offline
+#### <ins>Parsing the Hives Offline</ins>
 With the files safely downloaded onto our Kali Linux instance, we can now use Impacket's secretsdump locally to parse the database offline. This does not touch the target network at all, making it completely silent.
 Run this command in the directory where your downloaded hive files are located:
 ```
