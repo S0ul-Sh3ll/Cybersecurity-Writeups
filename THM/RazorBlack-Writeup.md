@@ -122,7 +122,7 @@ Companies typically use standard naming conventions. Looking at Steven Bradley's
 - sbradley
 - clin
 
-##🔥4: Asreproasting
+## 🔥4: Asreproasting
 Now that we have our `users.txt` wordlist, we shouldn't just blindly fire attacks at the server. In a real-world scenario, repeatedly guessing passwords for invalid accounts is a quick way to trigger security alerts. Instead, we will use a tool called **Kerbrute** to validate which of these usernames actually exist in the Active Directory environment. Kerbrute does this efficiently and quietly by abusing the Kerberos pre-authentication mechanism.
 
 Let's run Kerbrute against the Domain Controller:
