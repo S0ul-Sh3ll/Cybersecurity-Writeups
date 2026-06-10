@@ -76,7 +76,7 @@ Often in CTF rooms, if standard SMB/RPC enumeration doesn't yield immediate resu
 First, we visit the HTTP server on port 80:
 http://10.114.133.159
 
-_Figure 2:IIS Blank Website_
+_Figure 2: IIS Blank Website_
 
 <img width="1229" height="674" alt="image-246" src="https://github.com/user-attachments/assets/ea3e6672-1ac1-4803-9392-184a3172e02b" />
 
@@ -444,7 +444,7 @@ When high-privileged accounts (like Domain Admins) are placed into the Protected
 
 Because Pass-the-Hash (PtH) inherently relies on the NTLM protocol, the Domain Controller rejects our request immediately.
 
-#### 🎟️ The Pivot: Pass-the-Ticket (PtT) via Kerberos
+### 🎟️ The Pivot: Pass-the-Ticket (PtT) via Kerberos
 If NTLM is dead, we need to speak the protocol that Active Directory actually prefers: Kerberos.
 
 If we look closely at the output from our previous certipy-ad auth command, Certipy didn't just dump the NTLM hash. It also did this:
