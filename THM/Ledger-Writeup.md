@@ -60,15 +60,15 @@ Port 445 (SMB): File sharing, crucial for accessing SYSVOL and NETLOGON shares i
 
 Nmap's scripts (-sC) did a lot of heavy lifting for us, extracting vital naming conventions from the LDAP, RDP, and SSL certificates:
 
-Domain Name: <ins>thm.local</ins>
-Computer Name (Hostname): <ins>LABYRINTH</ins>
-Fully Qualified Domain Name (FQDN): <ins>labyrinth.thm.local</ins>
-OS Build: 10.0.17763 (A quick search reveals this build number corresponds to Windows Server 2019).
+* Domain Name: <ins>thm.local</ins>
+* Computer Name (Hostname): <ins>LABYRINTH</ins>
+* Fully Qualified Domain Name (FQDN): <ins>labyrinth.thm.local</ins>
+* OS Build: 10.0.17763 (A quick search reveals this build number corresponds to Windows Server 2019).
 
 Aside from the standard Active Directory ports, we also have web servers running:
 
-Port 80 (HTTP): Microsoft IIS httpd 10.0
-Port 443 (HTTPS): Also running web services with a self-signed certificate.
+* Port 80 (HTTP): Microsoft IIS httpd 10.0
+* Port 443 (HTTPS): Also running web services with a self-signed certificate.
 
 Often in CTF rooms, if standard SMB/RPC enumeration doesn't yield immediate results, the initial foothold lies within a custom web application hosted on these ports. However we'll first try the webservers to see if its of any importance or not.
 
