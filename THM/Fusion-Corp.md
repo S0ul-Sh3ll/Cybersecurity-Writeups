@@ -234,7 +234,7 @@ The (Pwn3d!) status tag on port 5985 is huge. It indicates that lparker has loca
 #### 3. Full Domain Enumeration via LDAP
 Since anonymous LDAP binds failed earlier, we can now use lparker to authenticate a proper LDAP bind and safely dump the entire user list, group memberships, and object descriptions directly from the Active Directory database:
 ```
-netexec ldap $target -u 'lparker' -p '!!abbylvzsvs2k6!' --users
+netexec ldap $target -u 'lparker' -p '!!REDACTED!' --users
 ```
 
 _Figure 12: LDAP User Enumeration with new creds found_
