@@ -85,7 +85,7 @@ netexec smb $target -u '' -p '' --rid-brute
 netexec ldap $target -u '' -p '' --users
 ```
 
-Figure 2: SMB and LDAP Enumeration Attempt Failed
+_Figure 2: SMB and LDAP Enumeration Attempt Failed_
 
 <img width="1082" height="484" alt="image-278" src="https://github.com/user-attachments/assets/fd7aa934-75eb-4c37-b7ea-af8a03a11484" />
 
@@ -209,7 +209,7 @@ Our immediate next step is to perform an authenticated sweep of the Domain Contr
 #### 1. Validating Shares & Local Rights
 We will use netexec over SMB to check if lparker has access to read domain shares or if they happen to possess administrative rights (marked by a lucrative Pwn3d! tag in NetExec):
 ```
-netexec smb $target -u 'lparker' -p '!!abbylvzsvs2k6!' --shares
+netexec smb $target -u 'lparker' -p 'REDACTED' --shares
 ```
 
 _Figure 10: SMB Shares_
@@ -221,14 +221,14 @@ We successfully authenticated to SMB, confirming our (READ) access to the defaul
 #### 2. Checking Remote Access (WinRM)
 We need to see if this user is allowed to log in remotely to get an interactive shell. We can check WinRM capability smoothly:
 ```
-netexec winrm $target -u 'lparker' -p '!!abbylvzsvs2k6!'
+netexec winrm $target -u 'lparker' -p '!!REDACTED!'
 ```
 
 _Figure 11: WinRM Pwn3d!_
 
 <img width="1072" height="70" alt="image-288" src="https://github.com/user-attachments/assets/8c87bf0e-243e-4cc3-9e72-a81ec57c1175" />
 
-[+] fusion.corp\lparker:!!abbylvzsvs2k6! (Pwn3d!) 🚨
+[+] fusion.corp\lparker:!!REDACTED! (Pwn3d!) 🚨
 The (Pwn3d!) status tag on port 5985 is huge. It indicates that lparker has local administrative privileges or belongs to the Remote Management Users group on this machine. We can use this to establish an interactive command shell.
 
 #### 3. Full Domain Enumeration via LDAP
